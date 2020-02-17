@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="12389288-c57a-4ec0-967d-e367ee07c822" name="Default Changelist" comment="" />
+    <list default="true" id="12389288-c57a-4ec0-967d-e367ee07c822" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accountvalue/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/accountvalue/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bd_kali/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/bd_kali/urls.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,8 +30,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/accountvalue/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="20" column="536" selection-start-line="20" selection-start-column="536" selection-end-line="20" selection-end-column="536" />
+            <state relative-caret-position="98">
+              <caret line="174" lean-forward="true" selection-start-line="174" selection-end-line="174" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -37,8 +42,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bd_kali/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="22" column="60" selection-start-line="22" selection-start-column="60" selection-end-line="22" selection-end-column="60" />
+            <state relative-caret-position="269">
+              <caret line="31" column="62" selection-start-line="31" selection-start-column="62" selection-end-line="31" selection-end-column="62" />
               <folding>
                 <element signature="e#631#663#0" expanded="true" />
               </folding>
@@ -48,12 +53,15 @@
       </file>
     </leaf>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/bd_kali/settings.py" />
-        <option value="$PROJECT_DIR$/bd_kali/urls.py" />
         <option value="$PROJECT_DIR$/accountvalue/views.py" />
+        <option value="$PROJECT_DIR$/bd_kali/urls.py" />
       </list>
     </option>
   </component>
@@ -63,6 +71,7 @@
     <option name="width" value="1750" />
     <option name="height" value="980" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -75,16 +84,6 @@
               <item name="bd_kali" type="b2602c69:ProjectViewProjectNode" />
               <item name="bd_kali" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="bd_kali" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bd_kali" type="462c0819:PsiDirectoryNode" />
-              <item name="accountvalue" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bd_kali" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bd_kali" type="462c0819:PsiDirectoryNode" />
-              <item name="bd_kali" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -93,6 +92,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -151,11 +151,12 @@
       <workItem from="1581480208956" duration="7772000" />
       <workItem from="1581564739124" duration="2662000" />
       <workItem from="1581651242243" duration="4407000" />
+      <workItem from="1581906426277" duration="9140000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="16051000" />
+    <option name="totallyTimeSpent" value="25191000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -170,12 +171,12 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26340482" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26675603" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32956153" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3286119" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -221,8 +222,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bd_kali/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="22" column="60" selection-start-line="22" selection-start-column="60" selection-end-line="22" selection-end-column="60" />
+        <state relative-caret-position="269">
+          <caret line="31" column="62" selection-start-line="31" selection-start-column="62" selection-end-line="31" selection-end-column="62" />
           <folding>
             <element signature="e#631#663#0" expanded="true" />
           </folding>
@@ -231,8 +232,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/accountvalue/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="20" column="536" selection-start-line="20" selection-start-column="536" selection-end-line="20" selection-end-column="536" />
+        <state relative-caret-position="98">
+          <caret line="174" lean-forward="true" selection-start-line="174" selection-end-line="174" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
           </folding>

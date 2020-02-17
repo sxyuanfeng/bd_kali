@@ -19,6 +19,15 @@ from accountvalue import views as av_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/accountvalue/', av_views.index),
-    path('api/masterbaseinfo', av_views.get_master_base_info)
+    path('api/masterbaseinfo', av_views.get_master_base_info),
+    path('api/fangender/', av_views.get_fan_gender),
+    path('api/followgender', av_views.get_follow_gender),
+    path('api/followrank', av_views.get_follow_rank),
+    path('api/fanrank', av_views.get_fan_rank),
+    path('api/followfollowcount', av_views.get_follow_follow_count),
+    path('api/followfollower', av_views.get_follow_follower_count),
+    path('api/fanfollowcount', av_views.get_fan_follow_count),
+    path('api/fanfollowercount', av_views.get_fan_follower_count),
+    path('api/followstatuscount', av_views.get_follow_status_count),
+    path('api/fanstatuscount', av_views.get_fan_status_count),
 ]
