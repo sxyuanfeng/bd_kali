@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from accountvalue import views as av_views
+from channel import views as ch_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,4 +31,6 @@ urlpatterns = [
     path('api/fanfollowercount', av_views.get_fan_follower_count),
     path('api/followstatuscount', av_views.get_follow_status_count),
     path('api/fanstatuscount', av_views.get_fan_status_count),
+
+    path('api/hottag', ch_views.get_hottag),
 ]
