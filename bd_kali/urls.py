@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from accountvalue import views as av_views
 from channel import views as ch_views
+from repost import views as re_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,6 +32,10 @@ urlpatterns = [
     path('api/fanfollowercount', av_views.get_fan_follower_count),
     path('api/followstatuscount', av_views.get_follow_status_count),
     path('api/fanstatuscount', av_views.get_fan_status_count),
+    path('api/masterstatusestimeline', av_views.get_master_statuses_timeline),
+    path('api/masterstatusesindex', av_views.get_master_statuses_index),
 
     path('api/hottag', ch_views.get_hottag),
+
+    path('api/repostchart', re_views.get_repost_chart)
 ]

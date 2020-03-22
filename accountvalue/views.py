@@ -200,7 +200,21 @@ def get_fan_status_count(request):
 
     return HttpResponse(json.dumps(status_obj))
 
+def get_master_statuses_timeline(request):
+    master_statuses_timeline = db.account_value.find_one({"master_name": request.GET['master_name']}, {"master_statuses"})
+    master_statuses_timeline_df = pd.DataFrame(master_statuses_timeline['master_statuses'])
+    statuses_timeline_list = list(master_statuses_timeline_df['status_created_at'])
 
+    return HttpResponse(json.dumps(statuses_timeline_list))
 
+def get_master_statuses_index(request):
+    master_statuses_index = db.account_value.find_one({"master_name": request.GET['master_name']}, {"master_statuses"})
+    master_statuses_index_df = pd.DataFrame(master_statuses_index['master_statuses'])
+    master_statuses_index_list = []
+    for index, row in master_statuses_index_df.iterrows():
+        master_statuses_index_list.append({'time': row['status_created_at'], 'attitudes': row['status_attitudes_count'],
+        'comments': row['status_comments_count'], 'reposts': row['status_reposts_count']})
+
+    return HttpResponse(json.dumps(master_statuses_index_list))
 
 

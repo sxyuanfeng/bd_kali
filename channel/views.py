@@ -22,6 +22,7 @@ def get_hottag(request):
         else:
             pass
         value = value - 1
+
     return HttpResponse(json.dumps(tag_list))
 
 
