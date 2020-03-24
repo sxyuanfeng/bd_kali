@@ -37,5 +37,6 @@ urlpatterns = [
 
     path('api/hottag', ch_views.get_hottag),
 
-    path('api/repostchart', re_views.get_repost_chart)
+    path('api/repostchart', re_views.get_repost_chart),
+    path('api/repostcard', re_views.get_repost_card),
 ]

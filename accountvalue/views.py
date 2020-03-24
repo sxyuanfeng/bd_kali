@@ -25,7 +25,7 @@ def get_fan_gender(request):
 
 def get_master_base_info(request):
     if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
-        master_base_info = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"master_name", "master_gender", "master_avatar", "master_urank", "master_desc", "master_fans_count", "master_follow_count", "master_statuses_count", "master_profile_url"})
+        master_base_info = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"master_name", "master_gender", "master_avatar", "master_urank", "master_desc", "master_fans_count", "master_follow_count", "master_statuses_count", "master_profile_url", "current_time"})
         base_info_obj = {"master_name": master_base_info['master_name'],
                          "master_gender": master_base_info['master_gender'],
                          "master_avatar": master_base_info['master_avatar'],
@@ -34,7 +34,8 @@ def get_master_base_info(request):
                          "master_fans_count": master_base_info['master_fans_count'],
                          "master_follow_count": master_base_info['master_follow_count'],
                          "master_statuses_count": master_base_info['master_statuses_count'],
-                         "master_profile_url": master_base_info['master_profile_url']}
+                         "master_profile_url": master_base_info['master_profile_url'],
+                         "current_time": str(master_base_info['current_time'])}
 
         return HttpResponse(json.dumps({'Code': 1, 'Data': base_info_obj}))
 
