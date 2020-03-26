@@ -15,10 +15,22 @@ def get_fan_gender(request):
         fans_gender_df = pd.DataFrame(fans_gender['fans_info'])
         female_count = len(fans_gender_df[fans_gender_df['fan_gender'] == 'f'])
         male_count = len(fans_gender_df[fans_gender_df['fan_gender'] == 'm'])
-        gender_obj = [{"item": "女", "count": female_count, "percent": female_count / (female_count + male_count)},
-                      {"item": "男", "count": male_count, "percent": male_count / (female_count + male_count)}]
+        gender_obj = {"man": round(male_count*100/(female_count+male_count), 2),
+                      "woman": round(female_count*100/(female_count+male_count), 2)}
 
         return HttpResponse(json.dumps({'Code': 1, 'Data': gender_obj}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_alive_fans(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        all_fans = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'master_fans_count'})['master_fans_count']
+        alive_fans = len(db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'fans_info'})['fans_info'])
+        alive_fans_obj = [{'type': "已销号", 'value': round((all_fans - alive_fans)*100 / all_fans, 2)},
+                          {'type': "存活", 'value': round(alive_fans*100 / all_fans, 2)}]
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': alive_fans_obj}))
 
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
@@ -51,8 +63,8 @@ def get_follow_gender(request):
         follow_gender_df = pd.DataFrame(follow_gender['follow_info'])
         female_count = len(follow_gender_df[follow_gender_df['follow_gender'] == 'f'])
         male_count = len(follow_gender_df[follow_gender_df['follow_gender'] == 'm'])
-        gender_obj = [{"item": "女", "count": female_count, "percent": female_count/(female_count+male_count)},
-                      {"item": "男", "count": male_count, "percent": male_count/(female_count+male_count)}]
+        gender_obj = {"man": round(male_count*100/(female_count+male_count), 2),
+                      "woman": round(female_count*100/(female_count+male_count), 2)}
 
         return HttpResponse(json.dumps({'Code': 1, 'Data': gender_obj}))
 

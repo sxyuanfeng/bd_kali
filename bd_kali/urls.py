@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/masterbaseinfo', av_views.get_master_base_info),
     path('api/fangender/', av_views.get_fan_gender),
+    path('api/alivefans', av_views.get_alive_fans),
     path('api/followgender', av_views.get_follow_gender),
     path('api/followrank', av_views.get_follow_rank),
     path('api/fanrank', av_views.get_fan_rank),
