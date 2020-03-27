@@ -9,6 +9,9 @@ import datetime
 client = pymongo.MongoClient(host='localhost', port=27017)
 db = client.weibo
 
+verified_type_dict = {'-1': '普通用户', '0': '名人', '1': '政府', '2': '企业', '3': '媒体', '4': '校园', '5': '网站',
+                      '6': '应用', '7': '团体或机构', '10': '微博女郎', '200': '初级达人', '220': '中高级达人'}
+
 def get_fan_gender(request):
     if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
         fans_gender = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"fans_info"})
@@ -23,6 +26,20 @@ def get_fan_gender(request):
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
 
+def get_fan_addv(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        fans_addv = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"fans_info"})
+        fans_addv_df = pd.DataFrame(fans_addv['fans_info'])
+        addv_count = len(fans_addv_df[fans_addv_df['fan_verified'] == True])
+        unaddv_count = len(fans_addv_df[fans_addv_df['fan_verified'] == False])
+        addv_obj = [{"type": '未加V', "value": round((unaddv_count*100 / (addv_count+unaddv_count)), 2)},
+                    {"type": '加V', "value": round((addv_count*100 / (addv_count+unaddv_count)), 2)}]
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': addv_obj}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
 def get_alive_fans(request):
     if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
         all_fans = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'master_fans_count'})['master_fans_count']
@@ -31,6 +48,56 @@ def get_alive_fans(request):
                           {'type': "存活", 'value': round(alive_fans*100 / all_fans, 2)}]
 
         return HttpResponse(json.dumps({'Code': 1, 'Data': alive_fans_obj}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_true_fans(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        alive_fans = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'fans_info'})['fans_info']
+        alive_fans_df = pd.DataFrame(alive_fans)
+        fake_fans_count = len(alive_fans_df[((alive_fans_df['fan_urank'] < 1) & (alive_fans_df['fan_followers_count'] < 1)
+                                & (alive_fans_df['fan_follow_count'] < 3)) | (alive_fans_df['fan_statuses_count'] < 1)])
+        return HttpResponse(json.dumps({'Code': 1, 'Data': [{'type': '水军', 'value': round((fake_fans_count*100 / len(alive_fans_df)), 2)},
+                                                            {'type': '真粉', 'value': round(((len(alive_fans_df) - fake_fans_count)*100 / len(alive_fans_df)), 2)}]}))
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_fan_measure(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        alive_fans = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'fans_info'})['fans_info']
+        alive_fans_df = pd.DataFrame(alive_fans)
+        alive_fans_count = len(alive_fans_df)
+        under100 = len(alive_fans_df[alive_fans_df['fan_followers_count'] <= 100])
+        under500 = len(alive_fans_df[(alive_fans_df['fan_followers_count'] <= 500) & (alive_fans_df['fan_followers_count'] > 100)])
+        under1000 = len(alive_fans_df[(alive_fans_df['fan_followers_count'] <= 1000) & (alive_fans_df['fan_followers_count'] > 500)])
+        under5000 = len(alive_fans_df[(alive_fans_df['fan_followers_count'] <= 5000) & (alive_fans_df['fan_followers_count'] > 1000)])
+        under10000 = len(alive_fans_df[(alive_fans_df['fan_followers_count'] <= 10000) & (alive_fans_df['fan_followers_count'] > 5000)])
+        under100000 = len(alive_fans_df[(alive_fans_df['fan_followers_count'] <= 100000) & (alive_fans_df['fan_followers_count'] > 10000)])
+        than100000 = len(alive_fans_df[alive_fans_df['fan_followers_count'] > 100000])
+        return HttpResponse(json.dumps({'Code': 1, 'Data': [
+            {'amount': '0-100', 'percent': round((under100 * 100 / alive_fans_count), 2)},
+            {'amount': '100-500', 'percent': round((under500 * 100 / alive_fans_count), 2)},
+            {'amount': '500-1000', 'percent': round((under1000 * 100 / alive_fans_count), 2)},
+            {'amount': '1000-5000', 'percent': round((under5000 * 100 / alive_fans_count), 2)},
+            {'amount': '5000-10000', 'percent': round((under10000 * 100 / alive_fans_count), 2)},
+            {'amount': '1万-10万', 'percent': round((under100000 * 100 / alive_fans_count), 2)},
+            {'amount': '10万以上', 'percent': round((than100000 * 100 / alive_fans_count), 2)},
+        ]}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_fan_verified_type(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        alive_fan = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'fans_info'})['fans_info']
+        alive_fan_df = pd.DataFrame(alive_fan)
+        alive_fan_count = len(alive_fan_df)
+        verified_type = alive_fan_df['fan_verified_type'].value_counts()
+        verified_type_list = []
+        for index in verified_type.index:
+            verified_type_list.append({'item': verified_type_dict[str(index)], 'percent': round((verified_type[index]*100 / alive_fan_count), 2)})
+        return HttpResponse(json.dumps({'Code': 1, 'Data': verified_type_list}))
 
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
@@ -71,191 +138,55 @@ def get_follow_gender(request):
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
 
-def get_follow_rank(request):
+def get_follow_addv(request):
     if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
-        follow_rank = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"follow_info"})
-        follow_rank_df = pd.DataFrame(follow_rank['follow_info'])
-        under_10 = len(follow_rank_df[follow_rank_df['follow_urank'] <= 10])
-        under_20 = len(follow_rank_df[(follow_rank_df['follow_urank'] <= 20) & (follow_rank_df['follow_urank'] > 10)])
-        under_30 = len(follow_rank_df[(follow_rank_df['follow_urank'] <= 30) & (follow_rank_df['follow_urank'] > 20)])
-        under_40 = len(follow_rank_df[(follow_rank_df['follow_urank'] <= 40) & (follow_rank_df['follow_urank'] > 30)])
-        under_50 = len(follow_rank_df[(follow_rank_df['follow_urank'] <= 50) & (follow_rank_df['follow_urank'] > 40)])
-        than_50 = len(follow_rank_df[follow_rank_df['follow_urank'] > 50])
-        follow_rank_obj = [{"type": "小于10", "value": under_10, "percent": under_10/len(follow_rank_df)},
-                           {"type": "大于10小于20", "value": under_20, "percent": under_20/len(follow_rank_df)},
-                           {"type": "大于20小于30", "value": under_30, "percent": under_30/len(follow_rank_df)},
-                           {"type": "大于30小于40", "value": under_40, "percent": under_40/len(follow_rank_df)},
-                           {"type": "大于40小于50", "value": under_50, "percent": under_50/len(follow_rank_df)},
-                           {"type": "大于50", "value": than_50, "percent": than_50/len(follow_rank_df)}]
+        follow_addv = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"follow_info"})
+        follow_addv_df = pd.DataFrame(follow_addv['follow_info'])
+        addv_count = len(follow_addv_df[follow_addv_df['follow_verified'] == True])
+        unaddv_count = len(follow_addv_df[follow_addv_df['follow_verified'] == False])
+        addv_obj = [{"type": '未加V', "value": round((unaddv_count*100 / (addv_count+unaddv_count)), 2)},
+                    {"type": '加V', "value": round((addv_count*100 / (addv_count+unaddv_count)), 2)}]
 
-        return HttpResponse(json.dumps({'Code': 1, 'Data': follow_rank_obj}))
+        return HttpResponse(json.dumps({'Code': 1, 'Data': addv_obj}))
 
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
 
-
-def get_fan_rank(request):
+def get_follow_measure(request):
     if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
-        fan_rank = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"fans_info"})
-        fan_rank_df = pd.DataFrame(fan_rank['fans_info'])
-        under_10 = len(fan_rank_df[fan_rank_df['fan_urank'] <= 10])
-        under_20 = len(fan_rank_df[(fan_rank_df['fan_urank'] <= 20) & (fan_rank_df['fan_urank'] > 10)])
-        under_30 = len(fan_rank_df[(fan_rank_df['fan_urank'] <= 30) & (fan_rank_df['fan_urank'] > 20)])
-        under_40 = len(fan_rank_df[(fan_rank_df['fan_urank'] <= 40) & (fan_rank_df['fan_urank'] > 30)])
-        under_50 = len(fan_rank_df[(fan_rank_df['fan_urank'] <= 50) & (fan_rank_df['fan_urank'] > 40)])
-        than_50 = len(fan_rank_df[fan_rank_df['fan_urank'] > 50])
-        fan_rank_obj = [{"type": "小于10", "value": under_10, "percent": under_10 / len(fan_rank_df)},
-                           {"type": "大于10小于20", "value": under_20, "percent": under_20 / len(fan_rank_df)},
-                           {"type": "大于20小于30", "value": under_30, "percent": under_30 / len(fan_rank_df)},
-                           {"type": "大于30小于40", "value": under_40, "percent": under_40 / len(fan_rank_df)},
-                           {"type": "大于40小于50", "value": under_50, "percent": under_50 / len(fan_rank_df)},
-                           {"type": "大于50", "value": than_50, "percent": than_50 / len(fan_rank_df)}]
-
-        return HttpResponse(json.dumps({'Code': 1, 'Data': fan_rank_obj}))
+        alive_follow = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'follow_info'})['follow_info']
+        alive_follow_df = pd.DataFrame(alive_follow)
+        alive_follow_count = len(alive_follow_df)
+        under100 = len(alive_follow_df[alive_follow_df['follow_followers_count'] <= 100])
+        under500 = len(alive_follow_df[(alive_follow_df['follow_followers_count'] <= 500) & (alive_follow_df['follow_followers_count'] > 100)])
+        under1000 = len(alive_follow_df[(alive_follow_df['follow_followers_count'] <= 1000) & (alive_follow_df['follow_followers_count'] > 500)])
+        under5000 = len(alive_follow_df[(alive_follow_df['follow_followers_count'] <= 5000) & (alive_follow_df['follow_followers_count'] > 1000)])
+        under10000 = len(alive_follow_df[(alive_follow_df['follow_followers_count'] <= 10000) & (alive_follow_df['follow_followers_count'] > 5000)])
+        under100000 = len(alive_follow_df[(alive_follow_df['follow_followers_count'] <= 100000) & (alive_follow_df['follow_followers_count'] > 10000)])
+        than100000 = len(alive_follow_df[alive_follow_df['follow_followers_count'] > 100000])
+        return HttpResponse(json.dumps({'Code': 1, 'Data': [
+            {'amount': '0-100', 'percent': round((under100*100 / alive_follow_count), 2)},
+            {'amount': '100-500', 'percent': round((under500 * 100 / alive_follow_count), 2)},
+            {'amount': '500-1000', 'percent': round((under1000 * 100 / alive_follow_count), 2)},
+            {'amount': '1000-5000', 'percent': round((under5000 * 100 / alive_follow_count), 2)},
+            {'amount': '5000-10000', 'percent': round((under10000 * 100 / alive_follow_count), 2)},
+            {'amount': '1万-10万', 'percent': round((under100000 * 100 / alive_follow_count), 2)},
+            {'amount': '10万以上', 'percent': round((than100000 * 100 / alive_follow_count), 2)},
+        ]}))
 
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
 
-def get_follow_follow_count(request):
+def get_follow_verified_type(request):
     if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
-        follow_follow_count = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"follow_info"})
-        follow_follow_count_df = pd.DataFrame(follow_follow_count['follow_info'])
-        under_200 = len(follow_follow_count_df[follow_follow_count_df['follow_follow_count'] <= 200])
-        under_400 = len(follow_follow_count_df[(follow_follow_count_df['follow_follow_count'] <= 400) & (follow_follow_count_df['follow_follow_count'] > 200)])
-        under_600 = len(follow_follow_count_df[(follow_follow_count_df['follow_follow_count'] <= 600) & (follow_follow_count_df['follow_follow_count'] > 400)])
-        under_800 = len(follow_follow_count_df[(follow_follow_count_df['follow_follow_count'] <= 800) & (follow_follow_count_df['follow_follow_count'] > 600)])
-        under_1000 = len(follow_follow_count_df[(follow_follow_count_df['follow_follow_count'] <= 1000) & (follow_follow_count_df['follow_follow_count'] > 800)])
-        than_1000 = len(follow_follow_count_df[follow_follow_count_df['follow_follow_count'] > 1000])
-        follow_obj = [{"type": "小于200", "value": under_200, "percent": under_200 / len(follow_follow_count_df)},
-                        {"type": "大于200小于400", "value": under_400, "percent": under_400 / len(follow_follow_count_df)},
-                        {"type": "大于400小于600", "value": under_600, "percent": under_600 / len(follow_follow_count_df)},
-                        {"type": "大于600小于8000", "value": under_800, "percent": under_800 / len(follow_follow_count_df)},
-                        {"type": "大于800小于1000", "value": under_1000, "percent": under_1000 / len(follow_follow_count_df)},
-                        {"type": "大于1000", "value": than_1000, "percent": than_1000 / len(follow_follow_count_df)}]
-
-        return HttpResponse(json.dumps({'Code': 1, 'Data': follow_obj}))
-
-    else:
-        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
-
-def get_follow_follower_count(request):
-    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
-        follow_follower_count = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"follow_info"})
-        follow_follower_count_df = pd.DataFrame(follow_follower_count['follow_info'])
-        under_200 = len(follow_follower_count_df[follow_follower_count_df['follow_followers_count'] <= 200])
-        under_400 = len(follow_follower_count_df[(follow_follower_count_df['follow_followers_count'] <= 400) & (follow_follower_count_df['follow_followers_count'] > 200)])
-        under_600 = len(follow_follower_count_df[(follow_follower_count_df['follow_followers_count'] <= 600) & (follow_follower_count_df['follow_followers_count'] > 400)])
-        under_800 = len(follow_follower_count_df[(follow_follower_count_df['follow_followers_count'] <= 800) & (follow_follower_count_df['follow_followers_count'] > 600)])
-        under_1000 = len(follow_follower_count_df[(follow_follower_count_df['follow_followers_count'] <= 1000) & (follow_follower_count_df['follow_followers_count'] > 800)])
-        than_1000 = len(follow_follower_count_df[follow_follower_count_df['follow_followers_count'] > 1000])
-        follower_obj = [{"type": "小于200", "value": under_200, "percent": under_200 / len(follow_follower_count_df)},
-                        {"type": "大于200小于400", "value": under_400, "percent": under_400 / len(follow_follower_count_df)},
-                        {"type": "大于400小于600", "value": under_600, "percent": under_600 / len(follow_follower_count_df)},
-                        {"type": "大于600小于8000", "value": under_800, "percent": under_800 / len(follow_follower_count_df)},
-                        {"type": "大于800小于1000", "value": under_1000, "percent": under_1000 / len(follow_follower_count_df)},
-                        {"type": "大于1000", "value": than_1000, "percent": than_1000 / len(follow_follower_count_df)}]
-
-        return HttpResponse(json.dumps({'Code': 1, 'Data': follower_obj}))
-
-    else:
-        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
-
-def get_fan_follow_count(request):
-    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
-        fan_follow_count = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"fans_info"})
-        fan_follow_count_df = pd.DataFrame(fan_follow_count['fans_info'])
-        under_200 = len(fan_follow_count_df[fan_follow_count_df['fan_follow_count'] <= 200])
-        under_400 = len(fan_follow_count_df[(fan_follow_count_df['fan_follow_count'] <= 400) & (fan_follow_count_df['fan_follow_count'] > 200)])
-        under_600 = len(fan_follow_count_df[(fan_follow_count_df['fan_follow_count'] <= 600) & (fan_follow_count_df['fan_follow_count'] > 400)])
-        under_800 = len(fan_follow_count_df[(fan_follow_count_df['fan_follow_count'] <= 800) & (fan_follow_count_df['fan_follow_count'] > 600)])
-        under_1000 = len(fan_follow_count_df[(fan_follow_count_df['fan_follow_count'] <= 1000) & (fan_follow_count_df['fan_follow_count'] > 800)])
-        than_1000 = len(fan_follow_count_df[fan_follow_count_df['fan_follow_count'] > 1000])
-        follow_obj = [{"type": "小于200", "value": under_200, "percent": under_200 / len(fan_follow_count_df)},
-                        {"type": "大于200小于400", "value": under_400, "percent": under_400 / len(fan_follow_count_df)},
-                        {"type": "大于400小于600", "value": under_600, "percent": under_600 / len(fan_follow_count_df)},
-                        {"type": "大于600小于8000", "value": under_800, "percent": under_800 / len(fan_follow_count_df)},
-                        {"type": "大于800小于1000", "value": under_1000, "percent": under_1000 / len(fan_follow_count_df)},
-                        {"type": "大于1000", "value": than_1000, "percent": than_1000 / len(fan_follow_count_df)}]
-
-        return HttpResponse(json.dumps({'Code': 1, 'Data': follow_obj}))
-
-    else:
-        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
-
-def get_fan_follower_count(request):
-    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
-        fan_follower_count = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"fans_info"})
-        fan_follower_count_df = pd.DataFrame(fan_follower_count['fans_info'])
-        under_200 = len(fan_follower_count_df[fan_follower_count_df['fan_followers_count'] <= 200])
-        under_400 = len(fan_follower_count_df[(fan_follower_count_df['fan_followers_count'] <= 400) & (fan_follower_count_df['fan_followers_count'] > 200)])
-        under_600 = len(fan_follower_count_df[(fan_follower_count_df['fan_followers_count'] <= 600) & (fan_follower_count_df['fan_followers_count'] > 400)])
-        under_800 = len(fan_follower_count_df[(fan_follower_count_df['fan_followers_count'] <= 800) & (fan_follower_count_df['fan_followers_count'] > 600)])
-        under_1000 = len(fan_follower_count_df[(fan_follower_count_df['fan_followers_count'] <= 1000) & (fan_follower_count_df['fan_followers_count'] > 800)])
-        than_1000 = len(fan_follower_count_df[fan_follower_count_df['fan_followers_count'] > 1000])
-        follower_obj = [{"type": "小于200", "value": under_200, "percent": under_200 / len(fan_follower_count_df)},
-                        {"type": "大于200小于400", "value": under_400, "percent": under_400 / len(fan_follower_count_df)},
-                        {"type": "大于400小于600", "value": under_600, "percent": under_600 / len(fan_follower_count_df)},
-                        {"type": "大于600小于8000", "value": under_800, "percent": under_800 / len(fan_follower_count_df)},
-                        {"type": "大于800小于1000", "value": under_1000, "percent": under_1000 / len(fan_follower_count_df)},
-                        {"type": "大于1000", "value": than_1000, "percent": than_1000 / len(fan_follower_count_df)}]
-
-        return HttpResponse(json.dumps({'Code': 1, 'Data': follower_obj}))
-
-    else:
-        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
-
-def get_follow_status_count(request):
-    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
-        follow_status_count = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"follow_info"})
-        follow_status_count_df = pd.DataFrame(follow_status_count['follow_info'])
-        under_100 = len(follow_status_count_df[follow_status_count_df['follow_statuses_count'] <= 100])
-        under_200 = len(follow_status_count_df[(follow_status_count_df['follow_statuses_count'] <= 200) & (follow_status_count_df[
-            'follow_statuses_count'] > 100)])
-        under_300 = len(follow_status_count_df[(follow_status_count_df['follow_statuses_count'] <= 300) & (follow_status_count_df[
-            'follow_statuses_count'] > 200)])
-        under_400 = len(follow_status_count_df[(follow_status_count_df['follow_statuses_count'] <= 400) & (follow_status_count_df[
-            'follow_statuses_count'] > 300)])
-        under_500 = len(follow_status_count_df[(follow_status_count_df['follow_statuses_count'] <= 500) & (follow_status_count_df[
-            'follow_statuses_count'] > 400)])
-        than_500 = len(follow_status_count_df[follow_status_count_df['follow_statuses_count'] > 500])
-        status_obj = [{"type": "小于100", "value": under_100, "percent": under_100 / len(follow_status_count_df)},
-                        {"type": "大于100小于200", "value": under_200, "percent": under_200 / len(follow_status_count_df)},
-                        {"type": "大于200小于300", "value": under_300, "percent": under_300 / len(follow_status_count_df)},
-                        {"type": "大于300小于400", "value": under_400, "percent": under_400 / len(follow_status_count_df)},
-                        {"type": "大于400小于500", "value": under_500, "percent": under_500 / len(follow_status_count_df)},
-                        {"type": "大于500", "value": than_500, "percent": than_500 / len(follow_status_count_df)}]
-
-        return HttpResponse(json.dumps({'Code': 1, 'Data': status_obj}))
-
-    else:
-        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
-
-def get_fan_status_count(request):
-    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
-        fan_status_count = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"fans_info"})
-        fan_status_count_df = pd.DataFrame(fan_status_count['fans_info'])
-        under_100 = len(fan_status_count_df[fan_status_count_df['fan_statuses_count'] <= 100])
-        under_200 = len(
-            fan_status_count_df[(fan_status_count_df['fan_statuses_count'] <= 200) & (fan_status_count_df[
-                'fan_statuses_count'] > 100)])
-        under_300 = len(
-            fan_status_count_df[(fan_status_count_df['fan_statuses_count'] <= 300) & (fan_status_count_df[
-                'fan_statuses_count'] > 200)])
-        under_400 = len(
-            fan_status_count_df[(fan_status_count_df['fan_statuses_count'] <= 400) & (fan_status_count_df[
-                'fan_statuses_count'] > 300)])
-        under_500 = len(
-            fan_status_count_df[(fan_status_count_df['fan_statuses_count'] <= 500) & (fan_status_count_df[
-                'fan_statuses_count'] > 400)])
-        than_500 = len(fan_status_count_df[fan_status_count_df['fan_statuses_count'] > 500])
-        status_obj = [{"type": "小于100", "value": under_100, "percent": under_100 / len(fan_status_count_df)},
-                      {"type": "大于100小于200", "value": under_200, "percent": under_200 / len(fan_status_count_df)},
-                      {"type": "大于200小于300", "value": under_300, "percent": under_300 / len(fan_status_count_df)},
-                      {"type": "大于300小于400", "value": under_400, "percent": under_400 / len(fan_status_count_df)},
-                      {"type": "大于400小于500", "value": under_500, "percent": under_500 / len(fan_status_count_df)},
-                      {"type": "大于500", "value": than_500, "percent": than_500 / len(fan_status_count_df)}]
-
-        return HttpResponse(json.dumps({'Code': 1, 'Data': status_obj}))
+        alive_follow = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'follow_info'})['follow_info']
+        alive_follow_df = pd.DataFrame(alive_follow)
+        alive_follow_count = len(alive_follow_df)
+        verified_type = alive_follow_df['follow_verified_type'].value_counts()
+        verified_type_list = []
+        for index in verified_type.index:
+            verified_type_list.append({'item': verified_type_dict[str(index)], 'percent': round((verified_type[index]*100 / alive_follow_count), 2)})
+        return HttpResponse(json.dumps({'Code': 1, 'Data': verified_type_list}))
 
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
@@ -271,16 +202,3 @@ def get_master_statuses_timeline(request):
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
 
-def get_master_statuses_index(request):
-    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
-        master_statuses_index = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"master_statuses"})
-        master_statuses_index_df = pd.DataFrame(master_statuses_index['master_statuses'])
-        master_statuses_index_list = []
-        for index, row in master_statuses_index_df.iterrows():
-            master_statuses_index_list.append({'time': row['status_created_at'], 'attitudes': row['status_attitudes_count'],
-            'comments': row['status_comments_count'], 'reposts': row['status_reposts_count']})
-
-        return HttpResponse(json.dumps({'Code': 1, 'Data': master_statuses_index_list}))
-
-    else:
-        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
