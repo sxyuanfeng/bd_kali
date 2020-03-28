@@ -32,7 +32,8 @@ urlpatterns = [
     path('api/followaddv', av_views.get_follow_addv),
     path('api/followmeasure', av_views.get_follow_measure),
     path('api/followverifiedtype', av_views.get_follow_verified_type),
-    path('api/masterstatusestimeline', av_views.get_master_statuses_timeline),
+    path('api/statusestimeline', av_views.get_statuses_timeline),
+    path('api/statusesactivetime', av_views.get_statuses_active_time),
 
     path('api/hottag', ch_views.get_hottag),
 

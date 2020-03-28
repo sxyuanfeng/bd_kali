@@ -4,7 +4,7 @@ import os
 import json
 import pandas as pd
 import pymongo
-import datetime
+from datetime import datetime
 
 client = pymongo.MongoClient(host='localhost', port=27017)
 db = client.weibo
@@ -120,7 +120,7 @@ def get_master_base_info(request):
 
     else:
         db.account_value_entry.insert_one(
-            {'master_id': int(request.GET['master_id']), 'time': datetime.datetime.now(), 'is_update': False})
+            {'master_id': int(request.GET['master_id']), 'time': datetime.now(), 'is_update': False})
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
 
 
@@ -191,14 +191,61 @@ def get_follow_verified_type(request):
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
 
-def get_master_statuses_timeline(request):
+def get_statuses_timeline(request):
     if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
-        master_statuses_timeline = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"master_statuses"})
-        master_statuses_timeline_df = pd.DataFrame(master_statuses_timeline['master_statuses'])
-        statuses_timeline_list = list(master_statuses_timeline_df['status_created_at'])
+        statuses_timeline = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"all_statuses"})
+        statuses_timeline_df = pd.DataFrame(statuses_timeline['all_statuses'][0:50])
+        statuses_timeline_list = list(statuses_timeline_df['status_created_at'])
+        attitude_mean = round(statuses_timeline_df['status_attitudes_count'].mean(), 2)
+        comment_mean = round(statuses_timeline_df['status_comments_count'].mean(), 2)
+        repost_mean = round(statuses_timeline_df['status_reposts_count'].mean(), 2)
 
-        return HttpResponse(json.dumps({'Code': 1, 'Data': statuses_timeline_list}))
+        top_3_attitude = []
+        statuses_timeline_df_atti = statuses_timeline_df.sort_values(["status_attitudes_count"],ascending=False)[0:3]
+        for index, row in statuses_timeline_df_atti.iterrows():
+            top_3_attitude.append({'time': row['status_created_at'],
+                                   'text': row['status_raw_text'] or row['status_text'],
+                                   'attitude': row['status_attitudes_count'],
+                                   'comment': row['status_comments_count'],
+                                   'repost': row['status_reposts_count']})
+        top_3_comment = []
+        statuses_timeline_df_comm = statuses_timeline_df.sort_values(["status_comments_count"], ascending=False)[0:3]
+        for index, row in statuses_timeline_df_comm.iterrows():
+            top_3_comment.append({'time': row['status_created_at'],
+                                   'text': row['status_raw_text'] or row['status_text'],
+                                   'attitude': row['status_attitudes_count'],
+                                   'comment': row['status_comments_count'],
+                                   'repost': row['status_reposts_count']})
+        top_3_repost = []
+        statuses_timeline_df_repo = statuses_timeline_df.sort_values(["status_reposts_count"], ascending=False)[0:3]
+        for index, row in statuses_timeline_df_repo.iterrows():
+            top_3_repost.append({'time': row['status_created_at'],
+                                  'text': row['status_raw_text'] or row['status_text'],
+                                  'attitude': row['status_attitudes_count'],
+                                  'comment': row['status_comments_count'],
+                                  'repost': row['status_reposts_count']})
+
+        statuses_timeline_obj = {'days': [statuses_timeline_df.iloc[0]['status_created_at'], statuses_timeline_df.iloc[-1]['status_created_at']],
+                                 'attitude_mean': attitude_mean,
+                                 'comment_mean': comment_mean,
+                                 'repost_mean': repost_mean,
+                                 'statuses_timeline_list': statuses_timeline_list,
+                                 'top_3_attitude': top_3_attitude,
+                                 'top_3_comment': top_3_comment,
+                                 'top_3_repost': top_3_repost,
+                                 }
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': statuses_timeline_obj}))
 
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
 
+def get_statuses_active_time(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        statuses_active_time = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"all_statuses"})
+        statuses_active_time_df = pd.DataFrame(statuses_active_time['all_statuses'])
+        statuses_active_time_list = list(statuses_active_time_df['status_created_at'])
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': statuses_active_time_list}))
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
