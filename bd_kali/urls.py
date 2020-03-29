@@ -34,6 +34,8 @@ urlpatterns = [
     path('api/followverifiedtype', av_views.get_follow_verified_type),
     path('api/statusestimeline', av_views.get_statuses_timeline),
     path('api/statusesactivetime', av_views.get_statuses_active_time),
+    path('api/statusesindex', av_views.get_statuses_index),
+    path('api/statusesretweet', av_views.get_statuses_retweet),
 
     path('api/hottag', ch_views.get_hottag),
 

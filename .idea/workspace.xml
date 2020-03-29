@@ -25,11 +25,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/accountvalue/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="281">
-              <caret line="248" column="84" selection-start-line="248" selection-start-column="84" selection-end-line="248" selection-end-column="84" />
+            <state relative-caret-position="411">
+              <caret line="291" column="42" selection-start-line="291" selection-start-column="42" selection-end-line="291" selection-end-column="42" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -37,11 +37,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bd_kali/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="444">
-              <caret line="37" column="44" lean-forward="true" selection-start-line="37" selection-start-column="44" selection-end-line="37" selection-end-column="44" />
+            <state relative-caret-position="428">
+              <caret line="37" column="63" selection-start-line="37" selection-start-column="63" selection-end-line="37" selection-end-column="63" />
               <folding>
                 <element signature="e#631#663#0" expanded="true" />
               </folding>
@@ -60,8 +60,8 @@
         <option value="$PROJECT_DIR$/bd_kali/settings.py" />
         <option value="$PROJECT_DIR$/channel/views.py" />
         <option value="$PROJECT_DIR$/repost/views.py" />
-        <option value="$PROJECT_DIR$/accountvalue/views.py" />
         <option value="$PROJECT_DIR$/bd_kali/urls.py" />
+        <option value="$PROJECT_DIR$/accountvalue/views.py" />
       </list>
     </option>
   </component>
@@ -201,11 +201,12 @@
       <workItem from="1585189085391" duration="4091000" />
       <workItem from="1585272358263" duration="15866000" />
       <workItem from="1585359275239" duration="8342000" />
+      <workItem from="1585447651485" duration="4192000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="106199000" />
+    <option name="totallyTimeSpent" value="110391000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -220,7 +221,7 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22788204" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23123324" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -290,22 +291,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/accountvalue/views.py">
+    <entry file="file://$PROJECT_DIR$/bd_kali/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
-          <caret line="248" column="84" selection-start-line="248" selection-start-column="84" selection-end-line="248" selection-end-column="84" />
+        <state relative-caret-position="428">
+          <caret line="37" column="63" selection-start-line="37" selection-start-column="63" selection-end-line="37" selection-end-column="63" />
           <folding>
-            <element signature="e#0#35#0" expanded="true" />
+            <element signature="e#631#663#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bd_kali/urls.py">
+    <entry file="file://$PROJECT_DIR$/accountvalue/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="37" column="44" lean-forward="true" selection-start-line="37" selection-start-column="44" selection-end-line="37" selection-end-column="44" />
+        <state relative-caret-position="411">
+          <caret line="291" column="42" selection-start-line="291" selection-start-column="42" selection-end-line="291" selection-end-column="42" />
           <folding>
-            <element signature="e#631#663#0" expanded="true" />
+            <element signature="e#0#35#0" expanded="true" />
           </folding>
         </state>
       </provider>

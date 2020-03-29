@@ -249,3 +249,49 @@ def get_statuses_active_time(request):
         return HttpResponse(json.dumps({'Code': 1, 'Data': statuses_active_time_list}))
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_statuses_index(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        statuses_index = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"all_statuses"})
+        statuses_index_df = pd.DataFrame(statuses_index['all_statuses'][0:10])
+        statuses_index_list = []
+        for index, row in statuses_index_df.iterrows():
+            statuses_index_list.append({
+                'name': '点赞',
+                'index': abs(index - 10),
+                'value': row['status_attitudes_count'],
+            })
+            statuses_index_list.append({
+                'name': '评论',
+                'index': abs(index - 10),
+                'value': row['status_comments_count'],
+            })
+            statuses_index_list.append({
+                'name': '转发',
+                'index': abs(index - 10),
+                'value': row['status_reposts_count'],
+            })
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': statuses_index_list}))
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_statuses_retweet(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        statuses_retweet = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"all_statuses"})
+        statuses_retweet_df = pd.DataFrame(statuses_retweet['all_statuses'])
+        statuses_isretweet = len(statuses_retweet_df[statuses_retweet_df['is_retweeted'] == True])
+        statuses_notretweet = len(statuses_retweet_df[statuses_retweet_df['is_retweeted'] == False])
+        statuses_retweet_list = [{
+            'name': 'retweet',
+            'value': statuses_isretweet,
+            'percent': round((statuses_isretweet*100 / (statuses_isretweet + statuses_notretweet)), 2)
+        }, {
+            'name': 'notretweet',
+            'value': statuses_notretweet,
+            'percent': round((statuses_notretweet * 100 / (statuses_isretweet + statuses_notretweet)), 2)
+        }]
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': statuses_retweet_list}))
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
