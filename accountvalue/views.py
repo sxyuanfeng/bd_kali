@@ -5,6 +5,9 @@ import json
 import pandas as pd
 import pymongo
 from datetime import datetime
+from pyecharts.charts import Map
+from pyecharts import options as opts
+from pyecharts.globals import ThemeType
 
 client = pymongo.MongoClient(host='localhost', port=27017)
 db = client.weibo
@@ -295,3 +298,102 @@ def get_statuses_retweet(request):
         return HttpResponse(json.dumps({'Code': 1, 'Data': statuses_retweet_list}))
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_statuses_source(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        all_statuses = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"all_statuses"})
+        all_statuses_df = pd.DataFrame(all_statuses['all_statuses'])
+        all_source = len(all_statuses_df)
+        statuses_source = all_statuses_df['status_source'].value_counts().to_dict()
+        statuses_source_list = []
+        for key in statuses_source:
+            statuses_source_list.append({'source': key, 'value': round((statuses_source[key]*100 / all_source) ,2)})
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': statuses_source_list}))
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_account_overview(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        all_statuses = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"all_statuses"})
+        all_statuses_df = pd.DataFrame(all_statuses['all_statuses'])
+        statuses_notretweet = len(all_statuses_df[all_statuses_df['is_retweeted'] == False])
+
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': statuses_source_list}))
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+'''
+def get_fan_area(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        fans_info = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"fans_info"})
+        fans_info_df = pd.DataFrame(fans_info['fans_info'])
+        userinfo_list = []
+        for index, row in fans_info_df.iterrows():
+            userinfo_list.extend(row['fan_userinfo'])
+        userinfo_df = pd.DataFrame(userinfo_list)
+        fans_area_df = userinfo_df[userinfo_df['item_name'] == '所在地']
+        fans_area_df['city'], fans_area_df['area'] = fans_area_df['item_content'].str.split(' ', 1).str
+        fans_area_obj = fans_area_df['city'].value_counts().to_dict()
+        other = len(fans_info_df) - len(fans_area_df)
+        fans_area_obj.update({'未知': other})
+
+        c = (
+            Map(init_opts=opts.InitOpts(width="400px", height="300px"))
+                .add("省份", [list(z) for z in zip(fans_area_obj.keys(), fans_area_obj.values())], "china", is_roam=False, is_map_symbol_show=False)
+                .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                    title_opts=opts.TitleOpts(title=""),
+                    visualmap_opts=opts.VisualMapOpts(
+                        item_height=60,
+                        item_width=10,
+                        pos_left=10,
+                        pos_bottom=20
+                    ),
+                    legend_opts=opts.LegendOpts(
+                        is_show=False
+                    )
+            )
+        )
+        return HttpResponse(json.dumps({'Code': 1, 'Data': fans_area_obj, 'Map': c.render_embed()}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_follow_area(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        follow_info = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"follow_info"})
+        follow_info_df = pd.DataFrame(follow_info['follow_info'])
+        userinfo_list = []
+        for index, row in follow_info_df.iterrows():
+            userinfo_list.extend(row['follow_userinfo'])
+        userinfo_df = pd.DataFrame(userinfo_list)
+        follow_area_df = userinfo_df[userinfo_df['item_name'] == '所在地']
+        follow_area_df['city'], follow_area_df['area'] = follow_area_df['item_content'].str.split(' ', 1).str
+        follow_area_obj = follow_area_df['city'].value_counts().to_dict()
+        other = len(follow_info_df) - len(follow_area_df)
+        follow_area_obj.update({'未知': other})
+
+        c = (
+            Map(init_opts=opts.InitOpts(width="400px", height="300px"))
+                .add("省份", [list(z) for z in zip(follow_area_obj.keys(), follow_area_obj.values())], "china", is_roam=False, is_map_symbol_show=False)
+                .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                    title_opts=opts.TitleOpts(title=""),
+                    visualmap_opts=opts.VisualMapOpts(
+                        item_height=60,
+                        item_width=10,
+                        pos_left=10,
+                        pos_bottom=20
+                    ),
+                    legend_opts=opts.LegendOpts(
+                        is_show=False
+                    )
+            )
+        )
+        return HttpResponse(json.dumps({'Code': 1, 'Data': follow_area_obj, 'Map': c.render_embed()}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+'''

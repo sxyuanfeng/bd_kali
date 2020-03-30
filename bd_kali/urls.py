@@ -28,14 +28,18 @@ urlpatterns = [
     path('api/truefans', av_views.get_true_fans),
     path('api/fanmeasure', av_views.get_fan_measure),
     path('api/fanverifiedtype', av_views.get_fan_verified_type),
+    #path('api/fanarea', av_views.get_fan_area),
     path('api/followgender', av_views.get_follow_gender),
     path('api/followaddv', av_views.get_follow_addv),
     path('api/followmeasure', av_views.get_follow_measure),
     path('api/followverifiedtype', av_views.get_follow_verified_type),
+    #path('api/followarea', av_views.get_follow_area),
     path('api/statusestimeline', av_views.get_statuses_timeline),
     path('api/statusesactivetime', av_views.get_statuses_active_time),
     path('api/statusesindex', av_views.get_statuses_index),
     path('api/statusesretweet', av_views.get_statuses_retweet),
+    path('api/statusessource', av_views.get_statuses_source),
+    path('api/accountoverview', av_views.get_account_overview),
 
     path('api/hottag', ch_views.get_hottag),
 
