@@ -105,6 +105,20 @@ def get_fan_verified_type(request):
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
 
+def get_fan_mbrank(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        alive_fan = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'fans_info'})['fans_info']
+        alive_fan_df = pd.DataFrame(alive_fan)
+        alive_fan_count = len(alive_fan_df)
+        mbrank = alive_fan_df['fan_mbrank'].value_counts()
+        mbrank_list = []
+        for index in mbrank.index:
+            mbrank_list.append({'item': str(index) + '级', 'percent': round((mbrank[index]*100 / alive_fan_count), 2)})
+        return HttpResponse(json.dumps({'Code': 1, 'Data': mbrank_list}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
 def get_master_base_info(request):
     if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
         master_base_info = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"master_name", "master_gender", "master_avatar", "master_urank", "master_desc", "master_fans_count", "master_follow_count", "master_statuses_count", "master_profile_url", "current_time"})
@@ -190,6 +204,20 @@ def get_follow_verified_type(request):
         for index in verified_type.index:
             verified_type_list.append({'item': verified_type_dict[str(index)], 'percent': round((verified_type[index]*100 / alive_follow_count), 2)})
         return HttpResponse(json.dumps({'Code': 1, 'Data': verified_type_list}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_follow_mbrank(request):
+    if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
+        alive_follow = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'follow_info'})['follow_info']
+        alive_follow_df = pd.DataFrame(alive_follow)
+        alive_follow_count = len(alive_follow_df)
+        mbrank = alive_follow_df['follow_mbrank'].value_counts()
+        mbrank_list = []
+        for index in mbrank.index:
+            mbrank_list.append({'item': str(index) + '级', 'percent': round((mbrank[index]*100 / alive_follow_count), 2)})
+        return HttpResponse(json.dumps({'Code': 1, 'Data': mbrank_list}))
 
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
@@ -317,10 +345,48 @@ def get_account_overview(request):
     if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
         all_statuses = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"all_statuses"})
         all_statuses_df = pd.DataFrame(all_statuses['all_statuses'])
+        all_statuses_count = len(all_statuses_df)
         statuses_notretweet = len(all_statuses_df[all_statuses_df['is_retweeted'] == False])
+        overview_obj = {'原创度': round((statuses_notretweet*100 / all_statuses_count), 1)}
+        recently_statuses = all_statuses_df[0:10]['status_created_at'].to_dict()
+        active_time = [recently_statuses[9], recently_statuses[0]]
+        print(active_time)
+        overview_obj.update({'活跃度': active_time})
+        all_fans = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'master_fans_count'})[
+            'master_fans_count']
+        alive_fans = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'fans_info'})['fans_info']
+        alive_fans_count = len(alive_fans)
+        alive_fans_df = pd.DataFrame(alive_fans)
+        fake_fans_count = len(
+            alive_fans_df[((alive_fans_df['fan_urank'] < 1) & (alive_fans_df['fan_followers_count'] < 1)
+                           & (alive_fans_df['fan_follow_count'] < 3)) | (alive_fans_df['fan_statuses_count'] < 1)])
+        true_fans_percent = round(((alive_fans_count - fake_fans_count)*100 / all_fans), 1)
+        overview_obj.update({'粉丝质量': true_fans_percent})
 
+        under100 = round((len(alive_fans_df[alive_fans_df['fan_followers_count'] <= 100]) / alive_fans_count), 2)
+        under500 = round((len(
+            alive_fans_df[(alive_fans_df['fan_followers_count'] <= 500) & (alive_fans_df['fan_followers_count'] > 100)]) / alive_fans_count), 2)
+        under1000 = round((len(alive_fans_df[(alive_fans_df['fan_followers_count'] <= 1000) & (
+                    alive_fans_df['fan_followers_count'] > 500)]) / alive_fans_count), 2)
+        under5000 = round((len(alive_fans_df[(alive_fans_df['fan_followers_count'] <= 5000) & (
+                    alive_fans_df['fan_followers_count'] > 1000)]) / alive_fans_count), 2)
+        under10000 = round((len(alive_fans_df[(alive_fans_df['fan_followers_count'] <= 10000) & (
+                    alive_fans_df['fan_followers_count'] > 5000)]) / alive_fans_count), 2)
+        under100000 = round((len(alive_fans_df[(alive_fans_df['fan_followers_count'] <= 100000) & (
+                    alive_fans_df['fan_followers_count'] > 10000)]) / alive_fans_count), 2)
+        than100000 = round((len(alive_fans_df[alive_fans_df['fan_followers_count'] > 100000]) / alive_fans_count) ,2)
 
-        return HttpResponse(json.dumps({'Code': 1, 'Data': statuses_source_list}))
+        influence = round(((under100*0.01 + under500*0.02 + under1000*0.05 + under5000*0.1 + under10000*0.15 + under100000*0.2 + than100000*0.47)*100), 1)
+        overview_obj.update({'影响力': influence})
+        mbrank = alive_fans_df['fan_mbrank'].value_counts()
+        novip = mbrank[0]
+        vip = round(((alive_fans_count - novip)*100 / alive_fans_count), 1)
+        addv_percent = round((len(alive_fans_df[alive_fans_df['fan_verified'] == True])*100 / alive_fans_count), 1)
+        verified_type = round((len(alive_fans_df['fan_verified_type'].value_counts())*100 / 12), 1)
+        ad_value = round(((vip + addv_percent + verified_type) / 3) ,1)
+        overview_obj.update({'广告投放价值': ad_value})
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': overview_obj}))
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
 
