@@ -18,6 +18,7 @@ from django.urls import path
 from accountvalue import views as av_views
 from channel import views as ch_views
 from repost import views as re_views
+from mblog import views as mb_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -47,4 +48,6 @@ urlpatterns = [
 
     path('api/repostchart', re_views.get_repost_chart),
     path('api/repostcard', re_views.get_repost_card),
+
+    path('api/mbloginfo', mb_views.get_mblog_info),
 ]

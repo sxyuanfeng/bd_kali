@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'accountvalue',
     'channel',
     'repost',
+    'mblog',
 ]
 
 MIDDLEWARE = [
