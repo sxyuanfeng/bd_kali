@@ -86,6 +86,7 @@ def get_repost_chart(request):
             {'mid': int(request.GET['mid']), 'time': datetime.datetime.now(), 'is_update': False})
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
 
+
 def get_repost_card(request):
     if db.repost.find({"_id": int(request.GET['mid'])}).count() > 0:
         author = db.repost.find_one({"_id": int(request.GET['mid'])}, {"author"})['author']

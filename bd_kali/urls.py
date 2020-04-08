@@ -50,4 +50,14 @@ urlpatterns = [
     path('api/repostcard', re_views.get_repost_card),
 
     path('api/mbloginfo', mb_views.get_mblog_info),
+    path('api/participantrepostfrom', mb_views.get_participant_repost_from),
+    path('api/participantrepostverified', mb_views.get_participant_repost_verified),
+    path('api/participantrepostgender', mb_views.get_participant_repost_gender),
+    path('api/participantrepostaddv', mb_views.get_participant_repost_addv),
+    path('api/participantreposttrue', mb_views.get_participant_repost_true),
+    path('api/participantrepostmeasure', mb_views.get_participant_repost_measure),
+    path('api/spreadtimeline', mb_views.get_spread_timeline),
+    path('api/spreadrepostrelative', mb_views.get_spread_repost_relative),
+    path('api/spreadrepostdeep', mb_views.get_spread_repost_deep),
+    path('api/spreadrepostkeyuser', mb_views.get_spread_repost_keyuser),
 ]
