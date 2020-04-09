@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import json
 from pyecharts.charts import Graph
 from pyecharts import options as opts
+import jieba.analyse
 
 client = pymongo.MongoClient(host='localhost', port=27017)
 db = client.weibo
@@ -257,6 +258,7 @@ def get_spread_repost_keyuser(request):
         repost_list = db.repost.find_one({"_id": int(request.GET['mid'])}, {"repost_list", "current_time"})
         repost_list_df = pd.DataFrame(repost_list['repost_list'])
         repost_list_df.sort_index(by=['reposts_count'],ascending=False,inplace=True)
+        repost_list_df.reset_index(drop=True, inplace=True)
         for index, row in repost_list_df.iterrows():
             if index == 0:
                 repost_keyuser_obj = {'avatar': row['avatar'],
@@ -270,6 +272,104 @@ def get_spread_repost_keyuser(request):
 
 
         return HttpResponse(json.dumps({'Code': 1, 'Data': repost_keyuser_obj}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_spread_repost_keyuser_road(request):
+    if db.repost.find({"_id": int(request.GET['mid'])}).count() > 0:
+        repost_list = db.repost.find_one({"_id": int(request.GET['mid'])}, {"repost_list", "author"})
+        repost_list_df = pd.DataFrame(repost_list['repost_list'])
+        repost_list_df.sort_index(by=['reposts_count'],ascending=False,inplace=True)
+        repost_list_df.reset_index(drop=True, inplace=True)
+        repost_keyuser_road_list = [repost_list['author']]
+        for index, row in repost_list_df.iterrows():
+            if index == 0:
+                raw_text_list = row['raw_text'].split('//@')
+                if len(raw_text_list) > 1:
+                    for i in range(len(raw_text_list)-1, 0, -1):
+                        repost_keyuser_road_list.append(raw_text_list[i].split(':')[0])
+                else:
+                    repost_keyuser_road_list.append(row['name'])
+            else:
+                pass
+
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': repost_keyuser_road_list}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_spread_repost_bomm(request):
+    if db.repost.find({"_id": int(request.GET['mid'])}).count() > 0:
+        repost_list = db.repost.find_one({"_id": int(request.GET['mid'])}, {"repost_list", "current_time"})
+        repost_list_df = pd.DataFrame(repost_list['repost_list'])
+        repost_list_df.sort_index(by=['reposts_count'], ascending=False, inplace=True)
+        repost_list_df.reset_index(drop=True, inplace=True)
+        repost_boom_list = []
+        for index, row in repost_list_df.iterrows():
+            if index < 10:
+                repost_boom_list.append({'avatar': row['avatar'],
+                                      'name': row['name'],
+                                      'followers_count': row['followers_count'],
+                                      'created_at': tran_time(row['created_at'], repost_list['current_time']),
+                                      'reposts_count': row['reposts_count']})
+            else:
+                pass
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': repost_boom_list}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_spread_overview(request):
+    if db.repost.find({"_id": int(request.GET['mid'])}).count() > 0:
+        repost_list = db.repost.find_one({"_id": int(request.GET['mid'])}, {"repost_list"})
+        repost_list_df = pd.DataFrame(repost_list['repost_list'])
+        repost_list_count = len(repost_list_df)
+        overview_obj = {}
+        under100 = round(len(repost_list_df[repost_list_df['followers_count'] <= 100]) / repost_list_count, 2)
+        under500 = round(len(repost_list_df[(repost_list_df['followers_count'] <= 500) & (repost_list_df['followers_count'] > 100)]) / repost_list_count, 2)
+        under1000 = round(len(repost_list_df[(repost_list_df['followers_count'] <= 1000) & (repost_list_df['followers_count'] > 500)]) / repost_list_count, 2)
+        under5000 = round(len(repost_list_df[(repost_list_df['followers_count'] <= 5000) & (repost_list_df['followers_count'] > 1000)]) / repost_list_count, 2)
+        under10000 = round(len(repost_list_df[(repost_list_df['followers_count'] <= 10000) & (repost_list_df['followers_count'] > 5000)]) / repost_list_count, 2)
+        under100000 = round(len(repost_list_df[(repost_list_df['followers_count'] <= 100000) & (repost_list_df['followers_count'] > 10000)]) / repost_list_count, 2)
+        than100000 = round(len(repost_list_df[repost_list_df['followers_count'] > 100000]) / repost_list_count, 2)
+        influence = round(((under100 * 0.01 + under500 * 0.02 + under1000 * 0.05 + under5000 * 0.1 + under10000 * 0.15 + under100000 * 0.2 + than100000 * 0.47) * 100), 1)
+        overview_obj.update({'用户质量': influence})
+
+        fake_repost_count = len(repost_list_df[((repost_list_df['urank'] < 2) & (repost_list_df['followers_count'] < 2))])
+        overview_obj.update({'真实用户': round(((repost_list_count - fake_repost_count) * 100 / repost_list_count), 1)})
+
+        addv_count = len(repost_list_df[repost_list_df['verified'] == True])
+        overview_obj.update({"加V": round((addv_count * 100 / repost_list_count), 1)})
+        overview_obj.update({'综合评分': round((overview_obj['用户质量'] + overview_obj['真实用户'] + overview_obj['加V']) / 3, 1)})
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': overview_obj}))
+
+    else:
+        return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))
+
+def get_spread_repost_word(request):
+    if db.repost.find({"_id": int(request.GET['mid'])}).count() > 0:
+        repost_list = db.repost.find_one({"_id": int(request.GET['mid'])}, {"repost_list"})
+        repost_list_df = pd.DataFrame(repost_list['repost_list'])
+        repost_list_df = repost_list_df[~repost_list_df['raw_text'].isin(['转发微博'])]
+        tag_list = []
+        for text in repost_list_df['raw_text']:
+            tag_line = jieba.analyse.extract_tags(text, topK=2, allowPOS=('n'))
+            if len(tag_line) > 0:
+                for item in tag_line:
+                    tag_list.append(item)
+            else:
+                pass
+        tag_list_df = pd.DataFrame({'word': tag_list})
+        tag_list_serise = tag_list_df['word'].value_counts()
+        tag_dict_list = []
+        for index in tag_list_serise.index:
+            tag_dict_list.append({'name': index, 'value': int(tag_list_serise[index])})
+
+        return HttpResponse(json.dumps({'Code': 1, 'Data': tag_dict_list}))
 
     else:
         return HttpResponse(json.dumps({'Code': 0, 'Msg': ''}))

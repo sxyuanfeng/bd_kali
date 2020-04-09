@@ -60,4 +60,8 @@ urlpatterns = [
     path('api/spreadrepostrelative', mb_views.get_spread_repost_relative),
     path('api/spreadrepostdeep', mb_views.get_spread_repost_deep),
     path('api/spreadrepostkeyuser', mb_views.get_spread_repost_keyuser),
+    path('api/spreadrepostkeyuserroad', mb_views.get_spread_repost_keyuser_road),
+    path('api/spreadrepostboom', mb_views.get_spread_repost_bomm),
+    path('api/spreadoverview', mb_views.get_spread_overview),
+    path('api/repostwordcloud', mb_views.get_spread_repost_word),
 ]
