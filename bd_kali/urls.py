@@ -19,6 +19,7 @@ from accountvalue import views as av_views
 from channel import views as ch_views
 from repost import views as re_views
 from mblog import views as mb_views
+from renting import views as rt_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -64,4 +65,9 @@ urlpatterns = [
     path('api/spreadrepostboom', mb_views.get_spread_repost_bomm),
     path('api/spreadoverview', mb_views.get_spread_overview),
     path('api/repostwordcloud', mb_views.get_spread_repost_word),
+
+    path('api/countrycityrenting', rt_views.get_country_city_renting),
+    path('api/rentingwordcloud', rt_views.get_renting_wordcloud),
+    path('api/rentinghuntinglist', rt_views.get_renting_hunting_list),
+    path('api/rentingoutlist', rt_views.get_renting_out_list),
 ]
