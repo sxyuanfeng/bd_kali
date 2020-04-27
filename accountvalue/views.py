@@ -13,7 +13,7 @@ client = pymongo.MongoClient(host='localhost', port=27017)
 db = client.weibo
 
 verified_type_dict = {'-1': '普通用户', '0': '名人', '1': '政府', '2': '企业', '3': '媒体', '4': '校园', '5': '网站',
-                      '6': '应用', '7': '团体或机构', '10': '微博女郎', '200': '初级达人', '220': '中高级达人'}
+                      '6': '应用', '7': '团体或机构', '8': '未知', '10': '微博女郎', '200': '初级达人', '220': '中高级达人'}
 
 def get_fan_gender(request):
     if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
@@ -225,7 +225,7 @@ def get_follow_mbrank(request):
 def get_statuses_timeline(request):
     if db.account_value.find({"_id": int(request.GET['master_id'])}).count() > 0:
         statuses_timeline = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {"all_statuses"})
-        statuses_timeline_df = pd.DataFrame(statuses_timeline['all_statuses'][0:50])
+        statuses_timeline_df = pd.DataFrame(statuses_timeline['all_statuses'][1:51])
         statuses_timeline_list = list(statuses_timeline_df['status_created_at'])
         attitude_mean = round(statuses_timeline_df['status_attitudes_count'].mean(), 2)
         comment_mean = round(statuses_timeline_df['status_comments_count'].mean(), 2)
@@ -348,9 +348,8 @@ def get_account_overview(request):
         all_statuses_count = len(all_statuses_df)
         statuses_notretweet = len(all_statuses_df[all_statuses_df['is_retweeted'] == False])
         overview_obj = {'原创度': round((statuses_notretweet*100 / all_statuses_count), 1)}
-        recently_statuses = all_statuses_df[0:10]['status_created_at'].to_dict()
-        active_time = [recently_statuses[9], recently_statuses[0]]
-        print(active_time)
+        recently_statuses = list(all_statuses_df[1:]['status_created_at'])
+        active_time = [recently_statuses[-1], recently_statuses[1], len(recently_statuses)]
         overview_obj.update({'活跃度': active_time})
         all_fans = db.account_value.find_one({"_id": int(request.GET['master_id'])}, {'master_fans_count'})[
             'master_fans_count']

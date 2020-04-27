@@ -192,11 +192,11 @@ def get_spread_repost_relative(request):
                 father.append(row['raw_text'][row['raw_text'].find('//@') + 3:][
                               :row['raw_text'][row['raw_text'].find('//@') + 3:].find(':')].replace(' ', ''))
             else:
-                father.append(author)
+                father.append('root')
 
         data['father'] = pd.DataFrame({'father': father})
 
-        nodes = [{'name': author, 'category': author, 'value': reposts}]
+        nodes = [{'name': 'root', 'category': 'root', 'value': reposts}]
         links = []
         category = []
 

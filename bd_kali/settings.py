@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'repost',
     'mblog',
     'renting',
+    'covid',
 ]
 
 MIDDLEWARE = [
