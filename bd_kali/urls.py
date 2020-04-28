@@ -20,6 +20,7 @@ from channel import views as ch_views
 from repost import views as re_views
 from mblog import views as mb_views
 from renting import views as rt_views
+from covid import views as cv_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -70,4 +71,8 @@ urlpatterns = [
     path('api/rentingwordcloud', rt_views.get_renting_wordcloud),
     path('api/rentinghuntinglist', rt_views.get_renting_hunting_list),
     path('api/rentingoutlist', rt_views.get_renting_out_list),
+
+    path('api/covidtimeline', cv_views.get_covid_timeline),
+    path('api/covidactiveuser', cv_views.get_covid_active_user),
+    path('api/covidoverseacountry', cv_views.get_covid_oversea_country),
 ]
