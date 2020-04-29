@@ -4,6 +4,7 @@
     <list default="true" id="12389288-c57a-4ec0-967d-e367ee07c822" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/bd_kali/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/bd_kali/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/covid/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/covid/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/renting/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/renting/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,8 +20,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/renting/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="409">
-              <caret line="38" column="5" lean-forward="true" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
+            <state relative-caret-position="124">
+              <caret line="47" column="42" selection-start-line="47" selection-start-column="42" selection-end-line="47" selection-end-column="42" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -31,7 +32,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/accountvalue/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
+            <state relative-caret-position="6688">
               <caret line="361" column="91" selection-start-line="361" selection-start-column="91" selection-end-line="361" selection-end-column="91" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
@@ -43,8 +44,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/covid/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="58" column="13" lean-forward="true" selection-start-line="58" selection-start-column="13" selection-end-line="58" selection-end-column="13" />
+            <state relative-caret-position="-826">
+              <caret line="54" column="12" selection-start-line="54" selection-start-column="12" selection-end-line="54" selection-end-column="12" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -53,19 +54,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/country.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="156" column="2" lean-forward="true" selection-start-line="156" selection-start-column="2" selection-end-line="156" selection-end-column="2" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bd_kali/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="428">
-              <caret line="78" lean-forward="true" selection-start-line="78" selection-end-line="78" />
+            <state relative-caret-position="257">
+              <caret line="75" column="64" selection-start-line="75" selection-start-column="64" selection-end-line="75" selection-end-column="64" />
               <folding>
                 <element signature="e#631#663#0" expanded="true" />
               </folding>
@@ -108,17 +100,18 @@
         <option value="$PROJECT_DIR$/channel/views.py" />
         <option value="$PROJECT_DIR$/repost/views.py" />
         <option value="$PROJECT_DIR$/renting/stopword.txt" />
-        <option value="$PROJECT_DIR$/renting/views.py" />
         <option value="$PROJECT_DIR$/mblog/views.py" />
         <option value="$PROJECT_DIR$/accountvalue/views.py" />
         <option value="$PROJECT_DIR$/bd_kali/settings.py" />
         <option value="$PROJECT_DIR$/covid/country.txt" />
-        <option value="$PROJECT_DIR$/bd_kali/urls.py" />
+        <option value="$PROJECT_DIR$/wuhan.txt" />
+        <option value="$PROJECT_DIR$/renting/views.py" />
         <option value="$PROJECT_DIR$/covid/views.py" />
+        <option value="$PROJECT_DIR$/bd_kali/urls.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="85" />
     <option name="y" value="25" />
     <option name="width" value="1750" />
@@ -130,7 +123,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -143,26 +135,33 @@
               <item name="bd_kali" type="462c0819:PsiDirectoryNode" />
               <item name="covid" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="bd_kali" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bd_kali" type="462c0819:PsiDirectoryNode" />
+              <item name="renting" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="D:/PycharmProjects/parser2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/covid" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\graduationDesign\system\bd_kali\covid" />
+      <recent name="D:\graduationDesign\system\bd_kali\renting" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\graduationDesign\system\bd_kali" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\graduationDesign\system\bd_kali\renting" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -278,11 +277,12 @@
       <workItem from="1587950330369" duration="321000" />
       <workItem from="1587952733878" duration="4863000" />
       <workItem from="1588035356699" duration="13781000" />
+      <workItem from="1588125616323" duration="5829000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="229672000" />
+    <option name="totallyTimeSpent" value="235501000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -294,15 +294,14 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="7" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22386059" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22654155" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49932975" weight="0.26487252" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49932975" visible="true" weight="0.26487252" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -367,6 +366,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/country.html" />
+    <entry file="file://$PROJECT_DIR$/accountvalue/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6688">
+          <caret line="361" column="91" selection-start-line="361" selection-start-column="91" selection-end-line="361" selection-end-column="91" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/country.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2964">
+          <caret line="156" column="2" selection-start-line="156" selection-start-column="2" selection-end-line="156" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/mblog/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3610">
@@ -387,40 +404,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/accountvalue/views.py">
+    <entry file="file://$PROJECT_DIR$/wuhan.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="361" column="91" selection-start-line="361" selection-start-column="91" selection-end-line="361" selection-end-column="91" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="228">
+          <caret line="12" column="2" lean-forward="true" selection-start-line="12" selection-start-column="2" selection-end-line="12" selection-end-column="2" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/covid/stopword.txt">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/renting/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="409">
-          <caret line="38" column="5" lean-forward="true" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
+        <state relative-caret-position="124">
+          <caret line="47" column="42" selection-start-line="47" selection-start-column="42" selection-end-line="47" selection-end-column="42" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/country.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/country.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="156" column="2" lean-forward="true" selection-start-line="156" selection-start-column="2" selection-end-line="156" selection-end-column="2" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bd_kali/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="428">
-          <caret line="78" lean-forward="true" selection-start-line="78" selection-end-line="78" />
+        <state relative-caret-position="257">
+          <caret line="75" column="64" selection-start-line="75" selection-start-column="64" selection-end-line="75" selection-end-column="64" />
           <folding>
             <element signature="e#631#663#0" expanded="true" />
           </folding>
@@ -429,8 +436,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/covid/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="58" column="13" lean-forward="true" selection-start-line="58" selection-start-column="13" selection-end-line="58" selection-end-column="13" />
+        <state relative-caret-position="-826">
+          <caret line="54" column="12" selection-start-line="54" selection-start-column="12" selection-end-line="54" selection-end-column="12" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
           </folding>

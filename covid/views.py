@@ -98,3 +98,51 @@ def get_covid_oversea_country(request):
     )
 
     return HttpResponse(json.dumps({'Code': 1, 'Data': c.render_embed()}))
+
+def get_covid_world_hot(request):
+    all_covid = db.covid_oversea_diary.find({}, {'text'}).limit(500)
+    all_text = ''
+    for item in all_covid:
+        all_text = all_text + item['text']
+    new_all_text = ''
+    for n in range(0, len(all_text) - 1):
+        if '\u4e00' <= all_text[n] <= '\u9fff':
+            new_all_text += all_text[n]
+    words = jieba.cut(new_all_text)
+    word_list = []
+    for word in words:
+        word_list.append(word)
+    word_list_df = pd.DataFrame({'word': word_list})
+    stopwords = pd.read_csv(os.path.join(os.path.dirname(os.path.abspath(__file__)) + '/stopword.txt'), index_col=False,
+                            quoting=3, sep='，', names=['stopword'],
+                            encoding="utf-8")
+    word_list_df = word_list_df[~word_list_df['word'].isin(stopwords.stopword)]
+    wordcloud_list = []
+    word_serise = word_list_df['word'].value_counts()
+    for index in word_serise.index:
+        wordcloud_list.append({'name': index, 'value': int(word_serise[index])})
+    return HttpResponse(json.dumps({'Code': 1, 'Data': wordcloud_list}))
+
+def get_wuhan_hot(request):
+    all_covid = db.covid_wuhan_diary.find({}, {'text'}).limit(500)
+    all_text = ''
+    for item in all_covid:
+        all_text = all_text + item['text']
+    new_all_text = ''
+    for n in range(0, len(all_text) - 1):
+        if '\u4e00' <= all_text[n] <= '\u9fff':
+            new_all_text += all_text[n]
+    words = jieba.cut(new_all_text)
+    word_list = []
+    for word in words:
+        word_list.append(word)
+    word_list_df = pd.DataFrame({'word': word_list})
+    stopwords = pd.read_csv(os.path.join(os.path.dirname(os.path.abspath(__file__)) + '/stopword.txt'), index_col=False,
+                            quoting=3, sep='，', names=['stopword'],
+                            encoding="utf-8")
+    word_list_df = word_list_df[~word_list_df['word'].isin(stopwords.stopword)]
+    wordcloud_list = []
+    word_serise = word_list_df['word'].value_counts()
+    for index in word_serise.index:
+        wordcloud_list.append({'name': index, 'value': int(word_serise[index])})
+    return HttpResponse(json.dumps({'Code': 1, 'Data': wordcloud_list}))

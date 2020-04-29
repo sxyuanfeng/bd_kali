@@ -43,8 +43,11 @@ def get_renting_wordcloud(request):
     renting_list = db.zufang.find_one({"city": request.GET['city']}, {"info_list"})
     renting_list_df = pd.DataFrame(renting_list['info_list'])
     word = ''.join(list(renting_list_df['text']))
-    word = re.sub("[A-Za-z0-9\!\%\[\]\,\。\<\>\#\@\&\/\-\=\"\:\?\'\;\.\➕\_\～\，\·\！\）\（\？\{\}\【\】\°\(\)]", "的", word)
-    words = jieba.cut(word)
+    new_word = ''
+    for n in range(0, len(word) - 1):
+        if '\u4e00' <= word[n] <= '\u9fff':
+            new_word += word[n]
+    words = jieba.cut(new_word)
     word_list = []
     for word in words:
         word_list.append(word)

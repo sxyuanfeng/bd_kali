@@ -75,4 +75,6 @@ urlpatterns = [
     path('api/covidtimeline', cv_views.get_covid_timeline),
     path('api/covidactiveuser', cv_views.get_covid_active_user),
     path('api/covidoverseacountry', cv_views.get_covid_oversea_country),
+    path('api/covidoverseahot', cv_views.get_covid_world_hot),
+    path('api/covidwuhanhot', cv_views.get_wuhan_hot),
 ]
