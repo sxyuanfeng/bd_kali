@@ -71,10 +71,13 @@ urlpatterns = [
     path('api/rentingwordcloud', rt_views.get_renting_wordcloud),
     path('api/rentinghuntinglist', rt_views.get_renting_hunting_list),
     path('api/rentingoutlist', rt_views.get_renting_out_list),
+    path('api/rentinghot', rt_views.get_renting_hot),
 
     path('api/covidtimeline', cv_views.get_covid_timeline),
     path('api/covidactiveuser', cv_views.get_covid_active_user),
     path('api/covidoverseacountry', cv_views.get_covid_oversea_country),
     path('api/covidoverseahot', cv_views.get_covid_world_hot),
     path('api/covidwuhanhot', cv_views.get_wuhan_hot),
+    path('api/covidoverseaemotion', cv_views.get_oversea_emotion),
+    path('api/covidwuhanemotion', cv_views.get_wuhan_emotion),
 ]

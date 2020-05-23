@@ -13,6 +13,24 @@ from datetime import datetime
 client = pymongo.MongoClient(host='localhost', port=27017)
 db = client.weibo
 
+positive_word = ['高兴', '好受', '开心', '快活', '快乐', '庆幸', '舒畅', '舒坦', '爽快', '甜美', '甜蜜', '甜丝丝', '喜出望外',
+                 '畅快', '喜悦', '喜滋滋', '心花怒放', '心旷神怡', '幸灾乐祸', '愉快', '安宁', '安然', '安详', '安心', '安慰',
+                 '如意', '如愿', '顺心', '随心', '随意', '幸福', '圆满', '期待', '向往', '入迷', '入神', '心醉', '敬仰', '敬重',
+                 '佩服', '仰慕', '尊敬', '尊重', '赞赏', '赞美', '感动', '宁静', '轻松', '踏实', '坦然', '心安理得', '心静',
+                 '心平气和', '镇定', '镇静', '乐观', '惊喜', '受宠若惊', '欣慰', '放心', '冷静', '昂扬', '鼓舞', '激动', '兴奋',
+                 '振奋', '振作', '放松', '解气', '欢畅', '欢快', '欢喜', '豁朗', '可喜', '快意', '宽畅', '狂喜', '舒心', '怡然',
+                 '愉悦', '倾慕', '崇敬', '景仰', '敬慕', '钦敬', '心悦诚服', '悦服', '尊崇', '赞佩', '可人', '惬意', '遂心', '遂愿',
+                 '宜人', '期求', '殷切', '快慰', '虔诚', '清爽', '欣幸']
+
+negative_word = ['愤慨', '愤怒', '恼火', '气愤', '悲哀', '悲伤', '沉痛', '伤感', '伤心', '痛苦', '惨然', '痛心', '心酸', '胆怯',
+                 '胆战心惊', '发憷', '害怕', '惊吓', '恐怖', '恐惧', '受惊', '心有余悸', '仇恨', '敌视', '敌意', '妒忌', '反感',
+                 '可恨', '可恶', '厌恶', '憎恨', '别扭', '不快', '不爽', '烦闷', '难受', '窝火', '窝囊', '心烦', '厌烦', '担心',
+                 '担忧', '发愁', '犯愁', '忧虑', '忧郁', '压抑', '郁闷', '无能感', '得意', '高傲', '狂妄', '优越感', '自大',
+                 '自负', '抱屈', '冤枉', '浮躁', '急切', '急躁', '焦急', '焦虑', '心急', '心急火燎', '心切', '发慌', '恐慌',
+                 '心慌意乱', '不好意思', '惭愧', '丢脸', '害羞', '亏心', '愧疚', '腼腆', '难堪', '难看', '怕羞', '羞耻', '羞辱',
+                 '悔悟', '忏悔', '后悔', '过意不去', '内疚', '警惕', '怀疑', '困惑', '迷茫', '可惜', '藐视', '蔑视', '轻视',
+                 '悲观', '沮丧', '失落感', '无望', '心寒', '孤单', '寂寞']
+
 country_chinese_english = {}
 country_ce = pd.read_excel('country_ce.xls')
 for index, row in country_ce.iterrows():
@@ -146,3 +164,48 @@ def get_wuhan_hot(request):
     for index in word_serise.index:
         wordcloud_list.append({'name': index, 'value': int(word_serise[index])})
     return HttpResponse(json.dumps({'Code': 1, 'Data': wordcloud_list}))
+
+def get_oversea_emotion(request):
+    all_covid = db.covid_oversea_diary.find({}, {'text'}).limit(500)
+    all_text = ''
+    for item in all_covid:
+        all_text = all_text + item['text']
+    new_all_text = ''
+    for n in range(0, len(all_text) - 1):
+        if '\u4e00' <= all_text[n] <= '\u9fff':
+            new_all_text += all_text[n]
+    jieba.load_userdict('emotion.txt')
+    words = jieba.cut(new_all_text)
+    positive_word_list = []
+    negative_word_list = []
+    for word in words:
+        if word in positive_word:
+            positive_word_list.append(word)
+        elif word in negative_word:
+            negative_word_list.append(word)
+    wordcloud_list = [{'item': '积极', 'percent': round((len(positive_word_list)*100 / (len(positive_word_list) + len(negative_word_list))), 2)},
+                      {'item': '消极', 'percent': round((len(negative_word_list)*100 / (len(positive_word_list) + len(negative_word_list))), 2)}]
+    return HttpResponse(json.dumps({'Code': 1, 'Data': wordcloud_list}))
+
+def get_wuhan_emotion(request):
+    all_covid = db.covid_wuhan_diary.find({}, {'text'}).limit(500)
+    all_text = ''
+    for item in all_covid:
+        all_text = all_text + item['text']
+    new_all_text = ''
+    for n in range(0, len(all_text) - 1):
+        if '\u4e00' <= all_text[n] <= '\u9fff':
+            new_all_text += all_text[n]
+    jieba.load_userdict('emotion.txt')
+    words = jieba.cut(new_all_text)
+    positive_word_list = []
+    negative_word_list = []
+    for word in words:
+        if word in positive_word:
+            positive_word_list.append(word)
+        elif word in negative_word:
+            negative_word_list.append(word)
+    wordcloud_list = [{'item': '积极', 'percent': round((len(positive_word_list)*100 / (len(positive_word_list) + len(negative_word_list))), 2)},
+                      {'item': '消极', 'percent': round((len(negative_word_list)*100 / (len(positive_word_list) + len(negative_word_list))), 2)}]
+    return HttpResponse(json.dumps({'Code': 1, 'Data': wordcloud_list}))
+

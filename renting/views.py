@@ -61,6 +61,29 @@ def get_renting_wordcloud(request):
         wordcloud_list.append({'name': index, 'value': int(word_serise[index])})
     return HttpResponse(json.dumps({'Code': 1, 'Data': wordcloud_list}))
 
+def get_renting_hot(request):
+    renting_list = db.zufang.find_one({"city": request.GET['city']}, {"info_list"})
+    renting_list_df = pd.DataFrame(renting_list['info_list'])
+    word = ''.join(list(renting_list_df['text']))
+    new_word = ''
+    for n in range(0, len(word) - 1):
+        if '\u4e00' <= word[n] <= '\u9fff':
+            new_word += word[n]
+    jieba.load_userdict('renting.txt')
+    renting_hot = ['地铁', '空调', '暖气', '主卧', '独卫', '阳台', '洗衣机', '超市', '学校', '短租', '长租', '电梯', '朝阳',
+                   '装修', '公交', '三室一厅', '四室一厅', '两室一厅', '一室一厅', '单间']
+    words = jieba.cut(new_word)
+    word_list = []
+    for word in words:
+        if word in renting_hot:
+            word_list.append(word)
+    word_list_df = pd.DataFrame({'word': word_list})
+    wordcloud_list = []
+    word_serise = word_list_df['word'].value_counts()
+    for index in word_serise.index:
+        wordcloud_list.append({'name': index, 'value': int(word_serise[index])})
+    return HttpResponse(json.dumps({'Code': 1, 'Data': wordcloud_list}))
+
 def get_renting_hunting_list(request):
     renting_hunting_list = db.zufang.find_one({"city": request.GET['city']}, {"info_list"})
     renting_hunting_list_df = pd.DataFrame(renting_hunting_list['info_list'])
